@@ -1,5 +1,6 @@
 package com.github.fedeoasi.newsapi
 
+import com.neovisionaries.i18n.CountryCode
 import org.json4s.jackson.Serialization._
 
 import scalaj.http.{Http, HttpResponse}
@@ -11,12 +12,14 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org") {
   private implicit val formats = org.json4s.DefaultFormats
 
   def topHeadlines(
-    query: Option[String] = None): Either[String, ArticlesResponse] = {
+    query: Option[String] = None,
+    country: Option[CountryCode] = None): Either[String, ArticlesResponse] = {
 
     val request = Http(s"$Host/top-headlines")
       .param(ApiKey, apiKey)
     val requestWithQuery = query.map(request.param(Query, _)).getOrElse(request)
-    val response = requestWithQuery.asString
+    val requestWithCountry = country.map(c => requestWithQuery.param(Country, c.getAlpha2)).getOrElse(request)
+    val response = requestWithCountry.asString
     parseResponse(response)
   }
 
@@ -49,5 +52,6 @@ object NewsApiClient {
   object Params {
     val ApiKey = "apiKey"
     val Query = "q"
+    val Country = "country"
   }
 }
