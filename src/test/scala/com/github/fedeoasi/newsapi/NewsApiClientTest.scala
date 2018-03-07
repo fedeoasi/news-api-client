@@ -6,9 +6,9 @@ import org.scalatest.{FunSpec, Matchers}
 
 class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
   private val validApiKey = "validApiSecret"
-  private val path = "/v2/everything"
 
   it("fails when the provided key is invalid") {
+    val path = "/v2/everything"
     val invalidApiKey = "123"
     stubFor(get(urlPathEqualTo(path))
       .withQueryParam(ApiKey, equalTo(invalidApiKey))
@@ -20,9 +20,11 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
     errorMessage should include("401")
   }
 
-  describe("Everything") {
+  describe("Top Headlines") {
+    val topHeadlinesPath = "/v2/top-headlines"
+
     it("finds articles about formula 1") {
-      stubFor(get(urlPathEqualTo(path))
+      stubFor(get(urlPathEqualTo(topHeadlinesPath))
         .withQueryParam(ApiKey, equalTo(validApiKey))
         .willReturn(
           aResponse()
@@ -34,9 +36,34 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
                 |   "description":"A description","url":"url","urlToImage":"imageUrl","publishedAt":"2018-01-31T13:16:33Z"}
                 |]}""".stripMargin)))
       val client = new NewsApiClient(validApiKey, Host)
-      val Right(response) = client.everything()
+      val Right(response) = client.topHeadlines()
       response.status shouldBe "ok"
       response.totalResults shouldBe 1
+      val source = Source(None, "Formula1.com")
+      response.articles shouldBe Seq(Article("Formula 1 article", source, None, "A description", "2018-01-31T13:16:33Z", "url", "imageUrl"))
+    }
+  }
+
+
+  describe("Everything") {
+    val everythingPath = "/v2/everything"
+
+    it("finds articles about formula 1") {
+      stubFor(get(urlPathEqualTo(everythingPath))
+        .withQueryParam(ApiKey, equalTo(validApiKey))
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody(
+              """
+                |{"status":"ok","totalResults":3,"articles":[
+                |  {"source":{"id":null,"name":"Formula1.com"},"author":null,"title":"Formula 1 article",
+                |   "description":"A description","url":"url","urlToImage":"imageUrl","publishedAt":"2018-01-31T13:16:33Z"}
+                |]}""".stripMargin)))
+      val client = new NewsApiClient(validApiKey, Host)
+      val Right(response) = client.everything()
+      response.status shouldBe "ok"
+      response.totalResults shouldBe 3
       val source = Source(None, "Formula1.com")
       response.articles shouldBe Seq(Article("Formula 1 article", source, None, "A description", "2018-01-31T13:16:33Z", "url", "imageUrl"))
     }
