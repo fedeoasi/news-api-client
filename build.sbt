@@ -1,12 +1,19 @@
 import Dependencies._
 
+inThisBuild(Seq(
+  organization := "com.github.fedeoasi",
+  pomIncludeRepository := { _ => false },
+  licenses += ("MIT License", url("http://www.opensource.org/licenses/mit-license.php")),
+  homepage := Some(url("https://github.com/fedeoasi/news-api-client")),
+  scmInfo := Some(ScmInfo(url("https://github.com/fedeoasi/news-api-client"), "scm:git@github.com:fedeoasi/news-api-client.git")),
+  developers := List(Developer("fedeoasi", "Federico Caimi", "fedeoasi@gmail.com", url("http://www.github.com/fedeoasi"))),
+  publishArtifact in Test := false,
+  publishMavenStyle := true,
+  scalaVersion := "2.12.4"),
+)
+
 lazy val root = (project in file(".")).
   settings(
-    inThisBuild(List(
-      organization := "com.github.fedeoasi",
-      scalaVersion := "2.12.4",
-      version      := "0.1.0-SNAPSHOT"
-    )),
     name := "News API Client",
     libraryDependencies ++= Seq(
       json4s,
@@ -14,5 +21,12 @@ lazy val root = (project in file(".")).
       scalajHttp,
       scalaTest,
       wireMock
-    )
+    ),
+    publishTo := {
+      val nexus = "https://oss.sonatype.org/"
+      if (isSnapshot.value)
+        throw new RuntimeException(s"Only non-snapshot releases can be published. version=${version.value}")
+      else
+        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+    }
   )
