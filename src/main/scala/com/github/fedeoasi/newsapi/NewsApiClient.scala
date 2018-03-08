@@ -4,7 +4,7 @@ import com.github.fedeoasi.newsapi.NewsApiClient.Params
 import com.neovisionaries.i18n.CountryCode
 import org.json4s.jackson.Serialization._
 
-import scalaj.http.{Http, HttpResponse}
+import scalaj.http.{Http, HttpRequest, HttpResponse}
 
 class NewsApiClient(apiKey: String, host: String = "newsapi.org") {
   import NewsApiClient.Params._
@@ -21,12 +21,12 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org") {
 
     val request = Http(s"$Host/top-headlines")
       .param(ApiKey, apiKey)
-    val requestWithQuery = query.map(request.param(Query, _)).getOrElse(request)
-    val requestWithCountry = country.map(c => requestWithQuery.param(Country, c.getAlpha2)).getOrElse(requestWithQuery)
-    val requestWithCategory = category.map(c => requestWithCountry.param(Params.Category, c.name())).getOrElse(requestWithCountry)
-    val requestWithPageSize = pageSize.map(s => requestWithCategory.param(PageSize, s.toString)).getOrElse(requestWithCategory)
-    val requestWithPage = page.map(p => requestWithPageSize.param(Page, p.toString)).getOrElse(requestWithPageSize)
-    val response = requestWithPage.asString
+    val withQuery = addOptionalQueryParameter(request, Query, query)
+    val withCountry = addOptionalQueryParameter(withQuery, Country, country.map(_.getAlpha2))
+    val withCategory = addOptionalQueryParameter(withCountry, Params.Category, category.map(_.name()))
+    val withPageSize = addOptionalQueryParameter(withCategory, PageSize, pageSize.map(_.toString()))
+    val withPage = addOptionalQueryParameter(withPageSize, Page, page.map(_.toString()))
+    val response = withPage.asString
     parseResponse(response)
   }
 
@@ -38,6 +38,13 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org") {
     val requestWithQuery = query.map(request.param(Query, _)).getOrElse(request)
     val response = requestWithQuery.asString
     parseResponse(response)
+  }
+
+  private def addOptionalQueryParameter(request: HttpRequest, key: String, value: Option[String]): HttpRequest = {
+    value match {
+      case Some(v) => request.param(key, v)
+      case None => request
+    }
   }
 
   private def parseResponse(response: HttpResponse[String]) = {
