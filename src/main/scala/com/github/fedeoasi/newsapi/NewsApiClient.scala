@@ -1,5 +1,6 @@
 package com.github.fedeoasi.newsapi
 
+import com.github.fedeoasi.newsapi.NewsApiClient.Params
 import com.neovisionaries.i18n.CountryCode
 import org.json4s.jackson.Serialization._
 
@@ -13,13 +14,19 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org") {
 
   def topHeadlines(
     query: Option[String] = None,
-    country: Option[CountryCode] = None): Either[String, ArticlesResponse] = {
+    country: Option[CountryCode] = None,
+    category: Option[Category] = None,
+    pageSize: Option[Int] = None,
+    page: Option[Int] = None): Either[String, ArticlesResponse] = {
 
     val request = Http(s"$Host/top-headlines")
       .param(ApiKey, apiKey)
     val requestWithQuery = query.map(request.param(Query, _)).getOrElse(request)
-    val requestWithCountry = country.map(c => requestWithQuery.param(Country, c.getAlpha2)).getOrElse(request)
-    val response = requestWithCountry.asString
+    val requestWithCountry = country.map(c => requestWithQuery.param(Country, c.getAlpha2)).getOrElse(requestWithQuery)
+    val requestWithCategory = category.map(c => requestWithCountry.param(Params.Category, c.name())).getOrElse(requestWithCountry)
+    val requestWithPageSize = pageSize.map(s => requestWithCategory.param(PageSize, s.toString)).getOrElse(requestWithCategory)
+    val requestWithPage = page.map(p => requestWithPageSize.param(Page, p.toString)).getOrElse(requestWithPageSize)
+    val response = requestWithPage.asString
     parseResponse(response)
   }
 
@@ -53,5 +60,8 @@ object NewsApiClient {
     val ApiKey = "apiKey"
     val Query = "q"
     val Country = "country"
+    val Category = "category"
+    val PageSize = "pageSize"
+    val Page = "page"
   }
 }
