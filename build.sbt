@@ -25,7 +25,7 @@ lazy val root = (project in file(".")).
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value)
-        throw new RuntimeException(s"Only non-snapshot releases can be published. version=${version.value}")
+        Some("snapshots" at nexus + "content/repositories/snapshots")
       else
         Some("releases"  at nexus + "service/local/staging/deploy/maven2")
     }
