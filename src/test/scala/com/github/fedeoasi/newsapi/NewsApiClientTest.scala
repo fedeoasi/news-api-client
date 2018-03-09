@@ -68,11 +68,31 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
       response.totalResults shouldBe 3
       response.articles shouldBe Seq(expectedArticle1, expectedArticle2)
     }
+
+    it("finds only CNBC articles") {
+      val body = s"""{"status":"ok","totalResults":1,"articles":[$article2]}"""
+      successfulStub(everythingPath, Seq(ApiKey -> validApiKey, Sources -> "cnbc"), body)
+      val client = new NewsApiClient(validApiKey, Host)
+      val Right(response) = client.everything(sources = Seq("cnbc"))
+      response.status shouldBe "ok"
+      response.totalResults shouldBe 1
+      response.articles shouldBe Seq(expectedArticle2)
+    }
+
+    it("finds articles before a date") {
+      val body = s"""{"status":"ok","totalResults":1,"articles":[$article1]}"""
+      successfulStub(everythingPath, Seq(ApiKey -> validApiKey, To -> "2018-01-31T13:15:33Z"), body)
+      val client = new NewsApiClient(validApiKey, Host)
+      val Right(response) = client.everything(to = Some("2018-01-31T13:15:33Z"))
+      response.status shouldBe "ok"
+      response.totalResults shouldBe 1
+      response.articles shouldBe Seq(expectedArticle1)
+    }
   }
 
   private def successfulStub(path: String, queryParams: Seq[(String, String)], body: String): Unit = {
     val builder = get(urlPathEqualTo(path))
-    queryParams.foreach { case (k, v) => builder.withQueryParam(k, equalTo(v)) }
-    stubFor(builder.willReturn(aResponse().withStatus(200).withBody(body)))
+    val withParams = queryParams.foldLeft(builder) { case (b, (k, v)) => b.withQueryParam(k, equalTo(v)) }
+    stubFor(withParams.willReturn(aResponse().withStatus(200).withBody(body)))
   }
 }
