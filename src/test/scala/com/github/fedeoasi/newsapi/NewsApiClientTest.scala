@@ -27,18 +27,18 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
       .willReturn(
         aResponse()
           .withStatus(401)))
-    val client = new NewsApiClient(invalidApiKey, Host)
+    val client = new NewsApiClient(invalidApiKey, Host, useHttps = false)
     val Left(errorMessage) = client.everything()
     errorMessage should include("401")
   }
 
   describe("Top Headlines") {
+    val client = new NewsApiClient(validApiKey, Host, useHttps = false)
     val topHeadlinesPath = "/v2/top-headlines"
 
     it("finds all headlines") {
       val body = s"""{"status":"ok","totalResults":2,"articles":[$article1,$article2]}"""
       successfulStub(topHeadlinesPath, Seq(ApiKey -> validApiKey), body)
-      val client = new NewsApiClient(validApiKey, Host)
       val Right(response) = client.topHeadlines()
       response.status shouldBe "ok"
       response.totalResults shouldBe 2
@@ -48,7 +48,6 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
     it("finds all headlines from CNBC") {
       val body = s"""{"status":"ok","totalResults":1,"articles":[$article2]}"""
       successfulStub(topHeadlinesPath, Seq(ApiKey -> validApiKey, Sources -> "cnbc"), body)
-      val client = new NewsApiClient(validApiKey, Host)
       val Right(response) = client.topHeadlines(sources = Seq("cnbc"))
       response.status shouldBe "ok"
       response.totalResults shouldBe 1
@@ -57,12 +56,12 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
   }
 
   describe("Everything") {
+    val client = new NewsApiClient(validApiKey, Host, useHttps = false)
     val everythingPath = "/v2/everything"
 
     it("finds all articles") {
       val body = s"""{"status":"ok","totalResults":3,"articles":[$article1,$article2]}"""
       successfulStub(everythingPath, Seq(ApiKey -> validApiKey), body)
-      val client = new NewsApiClient(validApiKey, Host)
       val Right(response) = client.everything()
       response.status shouldBe "ok"
       response.totalResults shouldBe 3
@@ -72,7 +71,6 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
     it("finds only CNBC articles") {
       val body = s"""{"status":"ok","totalResults":1,"articles":[$article2]}"""
       successfulStub(everythingPath, Seq(ApiKey -> validApiKey, Sources -> "cnbc"), body)
-      val client = new NewsApiClient(validApiKey, Host)
       val Right(response) = client.everything(sources = Seq("cnbc"))
       response.status shouldBe "ok"
       response.totalResults shouldBe 1
@@ -82,7 +80,6 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
     it("finds articles before a date") {
       val body = s"""{"status":"ok","totalResults":1,"articles":[$article1]}"""
       successfulStub(everythingPath, Seq(ApiKey -> validApiKey, To -> "2018-01-31T13:15:33Z"), body)
-      val client = new NewsApiClient(validApiKey, Host)
       val Right(response) = client.everything(to = Some("2018-01-31T13:15:33Z"))
       response.status shouldBe "ok"
       response.totalResults shouldBe 1

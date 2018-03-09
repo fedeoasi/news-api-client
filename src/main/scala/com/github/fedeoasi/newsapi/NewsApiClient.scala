@@ -6,10 +6,11 @@ import org.json4s.jackson.Serialization._
 
 import scalaj.http.{Http, HttpRequest, HttpResponse}
 
-class NewsApiClient(apiKey: String, host: String = "newsapi.org") {
+class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Boolean = true) {
   import NewsApiClient.Params._
 
-  private val Host = s"http://$host/v2"
+  private val protocol = if (useHttps) "https" else "http"
+  private val Host = s"$protocol://$host/v2"
   private implicit val formats = org.json4s.DefaultFormats
 
   def topHeadlines(
