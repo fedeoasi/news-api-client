@@ -16,6 +16,7 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org") {
     query: Option[String] = None,
     country: Option[CountryCode] = None,
     category: Option[Category] = None,
+    sources: Seq[String] = Seq.empty,
     pageSize: Option[Int] = None,
     page: Option[Int] = None): Either[String, ArticlesResponse] = {
 
@@ -24,7 +25,9 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org") {
     val withQuery = addOptionalQueryParameter(request, Query, query)
     val withCountry = addOptionalQueryParameter(withQuery, Country, country.map(_.getAlpha2))
     val withCategory = addOptionalQueryParameter(withCountry, Params.Category, category.map(_.name()))
-    val withPageSize = addOptionalQueryParameter(withCategory, PageSize, pageSize.map(_.toString()))
+    val optionalSources = if (sources.nonEmpty) Some(sources.mkString(",")) else None
+    val withSources = addOptionalQueryParameter(withCategory, Sources, optionalSources)
+    val withPageSize = addOptionalQueryParameter(withSources, PageSize, pageSize.map(_.toString()))
     val withPage = addOptionalQueryParameter(withPageSize, Page, page.map(_.toString()))
     val response = withPage.asString
     parseResponse(response)
@@ -68,6 +71,7 @@ object NewsApiClient {
     val Query = "q"
     val Country = "country"
     val Category = "category"
+    val Sources = "sources"
     val PageSize = "pageSize"
     val Page = "page"
   }
