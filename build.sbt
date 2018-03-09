@@ -28,5 +28,9 @@ lazy val root = (project in file(".")).
         Some("snapshots" at nexus + "content/repositories/snapshots")
       else
         Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-    }
+    },
+    initialCommands in console := """
+      import com.github.fedeoasi.newsapi._
+      import com.neovisionaries.i18n._
+    """
   )
