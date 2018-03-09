@@ -36,13 +36,8 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
     val topHeadlinesPath = "/v2/top-headlines"
 
     it("finds all headlines") {
-      stubFor(get(urlPathEqualTo(topHeadlinesPath))
-        .withQueryParam(ApiKey, equalTo(validApiKey))
-        .willReturn(
-          aResponse()
-            .withStatus(200)
-            .withBody(s"""{"status":"ok","totalResults":2,"articles":[$article1,$article2]}""")
-        ))
+      val body = s"""{"status":"ok","totalResults":2,"articles":[$article1,$article2]}"""
+      successfulStub(topHeadlinesPath, Seq(ApiKey -> validApiKey), body)
       val client = new NewsApiClient(validApiKey, Host)
       val Right(response) = client.topHeadlines()
       response.status shouldBe "ok"
@@ -51,14 +46,8 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
     }
 
     it("finds all headlines from CNBC") {
-      stubFor(get(urlPathEqualTo(topHeadlinesPath))
-        .withQueryParam(ApiKey, equalTo(validApiKey))
-        .withQueryParam(Sources, equalTo("cnbc"))
-        .willReturn(
-          aResponse()
-            .withStatus(200)
-            .withBody(s"""{"status":"ok","totalResults":1,"articles":[$article2]}""")
-        ))
+      val body = s"""{"status":"ok","totalResults":1,"articles":[$article2]}"""
+      successfulStub(topHeadlinesPath, Seq(ApiKey -> validApiKey, Sources -> "cnbc"), body)
       val client = new NewsApiClient(validApiKey, Host)
       val Right(response) = client.topHeadlines(sources = Seq("cnbc"))
       response.status shouldBe "ok"
@@ -71,18 +60,19 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
     val everythingPath = "/v2/everything"
 
     it("finds all articles") {
-      stubFor(get(urlPathEqualTo(everythingPath))
-        .withQueryParam(ApiKey, equalTo(validApiKey))
-        .willReturn(
-          aResponse()
-            .withStatus(200)
-            .withBody(s"""{"status":"ok","totalResults":3,"articles":[$article1,$article2]}""")
-        ))
+      val body = s"""{"status":"ok","totalResults":3,"articles":[$article1,$article2]}"""
+      successfulStub(everythingPath, Seq(ApiKey -> validApiKey), body)
       val client = new NewsApiClient(validApiKey, Host)
       val Right(response) = client.everything()
       response.status shouldBe "ok"
       response.totalResults shouldBe 3
       response.articles shouldBe Seq(expectedArticle1, expectedArticle2)
     }
+  }
+
+  private def successfulStub(path: String, queryParams: Seq[(String, String)], body: String): Unit = {
+    val builder = get(urlPathEqualTo(path))
+    queryParams.foreach { case (k, v) => builder.withQueryParam(k, equalTo(v)) }
+    stubFor(builder.willReturn(aResponse().withStatus(200).withBody(body)))
   }
 }
