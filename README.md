@@ -51,7 +51,7 @@ https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22
 ### Everything
 
 Search through millions of articles as described in its
-[New API documentation](https://newsapi.org/docs/endpoints/everything)
+[New API documentation](https://newsapi.org/docs/endpoints/everything).
 
 You can find all articles about BitCoin from the Wall Street Journal as
 follows:
@@ -65,3 +65,7 @@ client.everything(
 
 See all the supported parameters [here](
 https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L38).
+
+## Coming Soon
+- Support for asynchronous HTTP calls using Futures
+- Sources endpoint
