@@ -35,25 +35,33 @@ client.topHeadlines() match {
 
 ### Top Headlines
 
-[Top Headlines](https://newsapi.org/docs/endpoints/top-headlines) endpoint.
+Provides live top and breaking headlines as described in its
+[New API documentation](https://newsapi.org/docs/endpoints/top-headlines).
 
-
-Fetch the headlines for US newspapers:
+The following code fragment fetches all headlines from US news sources:
 
 ```scala
 import com.neovisionaries.i18n.CountryCode
 client.topHeadlines(country = Some(CountryCode.US))
 ```
 
+See all the supported parameters [here](
+https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L17).
+
 ### Everything
 
-[Everything](https://newsapi.org/docs/endpoints/everything) endpoint.
+Search through millions of articles as described in its
+[New API documentation](https://newsapi.org/docs/endpoints/everything)
 
-
-Fetch all articles about BitCoin from the Wall Street Journal:
+You can find all articles about BitCoin from the Wall Street Journal as
+follows:
 
 ```scala
 client.everything(
   query = Some("bitcoin"),
   sources = Seq("the-wall-street-journal")
 )
+```
+
+See all the supported parameters [here](
+https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L38).
