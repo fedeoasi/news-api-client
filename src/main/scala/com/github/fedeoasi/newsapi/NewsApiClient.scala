@@ -21,15 +21,16 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
     pageSize: Option[Int] = None,
     page: Option[Int] = None): Either[String, ArticlesResponse] = {
 
-    val request = Http(s"$Host/top-headlines")
-      .param(ApiKey, apiKey)
-    val withQuery = addOptionalQueryParameter(request, Query, query)
-    val withCountry = addOptionalQueryParameter(withQuery, Country, country.map(_.getAlpha2))
-    val withCategory = addOptionalQueryParameter(withCountry, Params.Category, category.map(_.name()))
-    val withSources = addOptionalQueryParameter(withCategory, Sources, toCsv(sources))
-    val withPageSize = addOptionalQueryParameter(withSources, PageSize, pageSize.map(_.toString()))
-    val withPage = addOptionalQueryParameter(withPageSize, Page, page.map(_.toString()))
-    val response = withPage.asString
+    val request = Http(s"$Host/top-headlines").param(ApiKey, apiKey)
+    val addQueryParams = Function.chain[HttpRequest](Seq(
+      addOptionalQueryParameter(_, Query, query),
+      addOptionalQueryParameter(_, Country, country.map(_.getAlpha2)),
+      addOptionalQueryParameter(_, Params.Category, category.map(_.name())),
+      addOptionalQueryParameter(_, Sources, toCsv(sources)),
+      addOptionalQueryParameter(_, PageSize, pageSize.map(_.toString())),
+      addOptionalQueryParameter(_, Page, page.map(_.toString()))
+    ))
+    val response = addQueryParams(request).asString
     parseResponse(response)
   }
 
@@ -46,16 +47,18 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
 
     val request = Http(s"$Host/everything")
       .param(ApiKey, apiKey)
-    val withQuery = query.map(request.param(Query, _)).getOrElse(request)
-    val withSources = addOptionalQueryParameter(withQuery, Sources, toCsv(sources))
-    val withDomains = addOptionalQueryParameter(withSources, Domains, toCsv(domains))
-    val withFrom = addOptionalQueryParameter(withDomains, From, from)
-    val withTo = addOptionalQueryParameter(withFrom, To, to)
-    val withLanguage = addOptionalQueryParameter(withTo, Language, language.map(_.name()))
-    val withSortBy = addOptionalQueryParameter(withLanguage, Params.SortBy, sortBy.map(_.name()))
-    val withPageSize = addOptionalQueryParameter(withSortBy, PageSize, pageSize.map(_.toString()))
-    val withPage = addOptionalQueryParameter(withPageSize, Page, page.map(_.toString()))
-    val response = withPage.asString
+    val addQueryParams = Function.chain[HttpRequest](Seq(
+      addOptionalQueryParameter(_, Query, query),
+      addOptionalQueryParameter(_, Sources, toCsv(sources)),
+      addOptionalQueryParameter(_, Domains, toCsv(domains)),
+      addOptionalQueryParameter(_, From, from),
+      addOptionalQueryParameter(_, To, to),
+      addOptionalQueryParameter(_, Language, language.map(_.name())),
+      addOptionalQueryParameter(_, Params.SortBy, sortBy.map(_.name())),
+      addOptionalQueryParameter(_, PageSize, pageSize.map(_.toString())),
+      addOptionalQueryParameter(_, Page, page.map(_.toString()))
+    ))
+    val response = addQueryParams(request).asString
     parseResponse(response)
   }
 
