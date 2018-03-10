@@ -9,8 +9,9 @@ inThisBuild(Seq(
   developers := List(Developer("fedeoasi", "Federico Caimi", "fedeoasi@gmail.com", url("http://www.github.com/fedeoasi"))),
   publishArtifact in Test := false,
   publishMavenStyle := true,
-  scalaVersion := "2.12.4"),
-)
+  crossScalaVersions := Seq("2.12.4", "2.11.12"),
+  scalaVersion := crossScalaVersions.value.head
+))
 
 lazy val root = (project in file(".")).
   settings(
