@@ -1,17 +1,18 @@
 package com.github.fedeoasi.newsapi
 
-import com.github.fedeoasi.newsapi.NewsApiClient.Params
-import com.neovisionaries.i18n.{CountryCode, LanguageCode}
-import org.json4s.jackson.Serialization._
+import java.time.Instant
 
-import scalaj.http.{Http, HttpRequest, HttpResponse}
+import com.github.fedeoasi.newsapi.NewsApiClient.Params
+import com.neovisionaries.i18n.{ CountryCode, LanguageCode }
+import org.json4s.jackson.Serialization._
+import scalaj.http.{ Http, HttpRequest, HttpResponse }
 
 class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Boolean = true) {
   import NewsApiClient.Params._
 
   private val protocol = if (useHttps) "https" else "http"
   private val Host = s"$protocol://$host/v2"
-  private implicit val formats = org.json4s.DefaultFormats
+  private implicit val formats = org.json4s.DefaultFormats + InstantSerializer
 
   def topHeadlines(
     query: Option[String] = None,
@@ -38,8 +39,8 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
     query: Option[String] = None,
     sources: Seq[String] = Seq.empty,
     domains: Seq[String] = Seq.empty,
-    from: Option[String] = None,
-    to: Option[String] = None,
+    from: Option[Instant] = None,
+    to: Option[Instant] = None,
     language: Option[LanguageCode] = None,
     sortBy: Option[SortBy] = None,
     pageSize: Option[Int] = None,
