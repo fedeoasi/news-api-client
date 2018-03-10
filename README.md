@@ -24,7 +24,7 @@ val client = new NewsApiClient("<NEWS_API_KEY>")
 ## Usage
 
 All responses returned by the client are wrapped in an `Either` object. You can
-retrieve the response using pattern matching as follows
+retrieve the response using pattern matching as follows:
 
 ```scala
 client.topHeadlines() match {
@@ -42,10 +42,8 @@ Fetch the headlines for US newspapers:
 
 ```scala
 import com.neovisionaries.i18n.CountryCode
-client.topHeadlines(country = Some(CountryCode.IT))
+client.topHeadlines(country = Some(CountryCode.US))
 ```
-
-
 
 ### Everything
 
