@@ -11,7 +11,7 @@ An HTTP client written in Scala for the [News API](https://newsapi.org).
 Add the following line to your SBT build definition:
 
 ```scala
-libraryDependencies += "com.github.fedeoasi" %% "news-api-client" % "0.1"
+libraryDependencies += "com.github.fedeoasi" %% "news-api-client" % "0.2"
 ```
 
 You can get an API key by registering at [News API](https://newsapi.org/account).
@@ -36,7 +36,7 @@ client.topHeadlines() match {
 ### Top Headlines
 
 Provides live top and breaking headlines as described in its
-[New API documentation](https://newsapi.org/docs/endpoints/top-headlines).
+[News API documentation](https://newsapi.org/docs/endpoints/top-headlines).
 
 The following code fragment fetches all headlines from US news sources:
 
@@ -51,7 +51,7 @@ https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22
 ### Everything
 
 Search through millions of articles as described in its
-[New API documentation](https://newsapi.org/docs/endpoints/everything).
+[News API documentation](https://newsapi.org/docs/endpoints/everything).
 
 You can find all articles about BitCoin from the Wall Street Journal as
 follows:
