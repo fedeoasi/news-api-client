@@ -32,7 +32,7 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
         aResponse()
           .withStatus(401)))
     val client = new NewsApiClient(invalidApiKey, Host, useHttps = false)
-    val Left(errorMessage) = client.everything()
+    val Left(errorMessage) = client.everything("query")
     errorMessage should include("401")
   }
 
@@ -66,7 +66,7 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
     it("finds all articles") {
       val body = s"""{"status":"ok","totalResults":3,"articles":[$article1,$article2]}"""
       successfulStub(everythingPath, Seq(ApiKey -> validApiKey), body)
-      val Right(response) = client.everything()
+      val Right(response) = client.everything("query")
       response.status shouldBe "ok"
       response.totalResults shouldBe 3
       response.articles shouldBe Seq(expectedArticle1, expectedArticle2)
@@ -75,7 +75,7 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
     it("finds only CNBC articles") {
       val body = s"""{"status":"ok","totalResults":1,"articles":[$article2]}"""
       successfulStub(everythingPath, Seq(ApiKey -> validApiKey, Sources -> "cnbc"), body)
-      val Right(response) = client.everything(sources = Seq("cnbc"))
+      val Right(response) = client.everything("query", sources = Seq("cnbc"))
       response.status shouldBe "ok"
       response.totalResults shouldBe 1
       response.articles shouldBe Seq(expectedArticle2)
@@ -84,7 +84,7 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
     it("finds articles before a date") {
       val body = s"""{"status":"ok","totalResults":1,"articles":[$article1]}"""
       successfulStub(everythingPath, Seq(ApiKey -> validApiKey, To -> "2018-01-31T13:15:33Z"), body)
-      val Right(response) = client.everything(to = Some(Instant.parse("2018-01-31T13:15:33Z")))
+      val Right(response) = client.everything("query", to = Some(Instant.parse("2018-01-31T13:15:33Z")))
       response.status shouldBe "ok"
       response.totalResults shouldBe 1
       response.articles shouldBe Seq(expectedArticle1)

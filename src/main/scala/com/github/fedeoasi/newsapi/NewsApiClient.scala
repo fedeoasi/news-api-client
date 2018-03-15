@@ -37,7 +37,7 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
   }
 
   def everything(
-    query: Option[String] = None,
+    query: String,
     sources: Seq[String] = Seq.empty,
     domains: Seq[String] = Seq.empty,
     from: Option[Instant] = None,
@@ -49,8 +49,8 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
 
     val request = Http(s"$Host/everything")
       .param(ApiKey, apiKey)
+      .param(Query, query)
     val addQueryParams = Function.chain[HttpRequest](Seq(
-      addOptionalQueryParameter(_, Query, query),
       addOptionalQueryParameter(_, Sources, toCsv(sources)),
       addOptionalQueryParameter(_, Domains, toCsv(domains)),
       addOptionalQueryParameter(_, From, from.map(_.toString)),
