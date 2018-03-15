@@ -46,7 +46,7 @@ client.topHeadlines(country = Some(CountryCode.US))
 ```
 
 See all the supported parameters [here](
-https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L18).
+https://github.com/fedeoasi/news-api-client/blob/7040e778697c25a1a5073701e3b4af0125b549ef/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L18).
 
 ### Everything
 
@@ -64,7 +64,7 @@ client.everything(
 ```
 
 See all the supported parameters [here](
-https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L39).
+https://github.com/fedeoasi/news-api-client/blob/7040e778697c25a1a5073701e3b4af0125b549ef/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L39).
 
 ### Sources
 
@@ -79,7 +79,7 @@ client.sources()
 ```
 
 See all the supported parameters [here](
-https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L67).
+https://github.com/fedeoasi/news-api-client/blob/7040e778697c25a1a5073701e3b4af0125b549ef/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L67).
 
 ## Coming Soon
 - Support for asynchronous HTTP calls using Futures
