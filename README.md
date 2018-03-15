@@ -46,7 +46,7 @@ client.topHeadlines(country = Some(CountryCode.US))
 ```
 
 See all the supported parameters [here](
-https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L17).
+https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L18).
 
 ### Everything
 
@@ -64,8 +64,22 @@ client.everything(
 ```
 
 See all the supported parameters [here](
-https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L38).
+https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L39).
+
+### Sources
+
+Returns a subset of the news publishers that top headlines are available
+from as described in its
+[News API documentation](https://newsapi.org/docs/endpoints/sources).
+
+You can find all sources as follows:
+
+```scala
+client.sources()
+```
+
+See all the supported parameters [here](
+https://github.com/fedeoasi/news-api-client/blob/1d37337205dacb2b5d6246a605b8a22bc1b2c0fa/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L67).
 
 ## Coming Soon
 - Support for asynchronous HTTP calls using Futures
-- Sources endpoint

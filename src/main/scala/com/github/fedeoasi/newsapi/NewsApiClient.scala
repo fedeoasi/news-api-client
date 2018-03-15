@@ -3,16 +3,17 @@ package com.github.fedeoasi.newsapi
 import java.time.Instant
 
 import com.github.fedeoasi.newsapi.NewsApiClient.Params
-import com.neovisionaries.i18n.{ CountryCode, LanguageCode }
+import com.neovisionaries.i18n.{CountryCode, LanguageCode}
 import org.json4s.jackson.Serialization._
-import scalaj.http.{ Http, HttpRequest, HttpResponse }
+
+import scalaj.http.{Http, HttpRequest, HttpResponse}
 
 class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Boolean = true) {
   import NewsApiClient.Params._
 
   private val protocol = if (useHttps) "https" else "http"
   private val Host = s"$protocol://$host/v2"
-  private implicit val formats = org.json4s.DefaultFormats + InstantSerializer
+  private implicit val formats = org.json4s.DefaultFormats + InstantSerializer + CategorySerializer + LanguageCodeSerializer
 
   def topHeadlines(
     query: Option[String] = None,
@@ -32,7 +33,7 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
       addOptionalQueryParameter(_, Page, page.map(_.toString()))
     ))
     val response = addQueryParams(request).asString
-    parseResponse(response)
+    parseResponse[ArticlesResponse](response)
   }
 
   def everything(
@@ -60,7 +61,24 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
       addOptionalQueryParameter(_, Page, page.map(_.toString()))
     ))
     val response = addQueryParams(request).asString
-    parseResponse(response)
+    parseResponse[ArticlesResponse](response)
+  }
+
+  def sources(
+    category: Option[Category] = None,
+    language: Option[LanguageCode] = None,
+    country: Option[CountryCode] = None
+  ): Either[String, SourcesResponse] = {
+
+    val request = Http(s"$Host/sources")
+      .param(ApiKey, apiKey)
+    val addQueryParams = Function.chain[HttpRequest](Seq(
+      addOptionalQueryParameter(_, Params.Category, category.map(_.name)),
+      addOptionalQueryParameter(_, Language, language.map(_.name)),
+      addOptionalQueryParameter(_, Country, language.map(_.name))
+    ))
+    val response = addQueryParams(request).asString
+    parseResponse[SourcesResponse](response)
   }
 
   private def addOptionalQueryParameter(request: HttpRequest, key: String, value: Option[String]): HttpRequest = {
@@ -72,12 +90,12 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
 
   private def toCsv(seq: Seq[String]): Option[String] = if (seq.nonEmpty) Some(seq.mkString(",")) else None
 
-  private def parseResponse(response: HttpResponse[String]) = {
+  private def parseResponse[T: Manifest](response: HttpResponse[String]): Either[String, T] = {
     if (!response.is2xx) {
       Left(s"Error: returned code is ${response.code}. body: ${response.body}")
     } else {
       val body = response.body
-      Right(read[ArticlesResponse](body))
+      Right(read[T](body))
     }
   }
 }
@@ -85,6 +103,10 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
 case class ArticlesResponse(
   articles: Seq[Article],
   totalResults: Int,
+  status: String)
+
+case class SourcesResponse(
+  sources: Seq[FullSource],
   status: String)
 
 object NewsApiClient {

@@ -5,6 +5,9 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.{FunSpec, Matchers}
 import java.time.Instant
 
+import com.github.fedeoasi.newsapi.NewsApiClient.Params
+import com.neovisionaries.i18n.LanguageCode
+
 class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
   private val validApiKey = "validApiSecret"
 
@@ -85,6 +88,41 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
       response.status shouldBe "ok"
       response.totalResults shouldBe 1
       response.articles shouldBe Seq(expectedArticle1)
+    }
+  }
+
+  describe("Sources") {
+    val client = new NewsApiClient(validApiKey, Host, useHttps = false)
+    val everythingPath = "/v2/sources"
+
+    val source1 = """{"id":"abc-news","name":"ABC News","description":"Your trusted source","url":"http://abcnews.go.com","category":"general","language":"en","country":"us"}"""
+    val source2 = """{"id":"source2","name":"Second Source","description":"Your trusted source 2","url":"http://source2.com","category":"business","language":"it","country":"it"}"""
+
+    val expectedSource1 = FullSource("abc-news", "ABC News", "Your trusted source", "http://abcnews.go.com", Category.general, LanguageCode.en, "us")
+    val expectedSource2 = FullSource("source2", "Second Source", "Your trusted source 2", "http://source2.com", Category.business, LanguageCode.it, "it")
+
+    it("finds all sources") {
+      val body = s"""{"status":"ok","sources":[$source1,$source2]}"""
+      successfulStub(everythingPath, Seq(ApiKey -> validApiKey), body)
+      val Right(response) = client.sources()
+      response.status shouldBe "ok"
+      response.sources shouldBe Seq(expectedSource1, expectedSource2)
+    }
+
+    it("finds a source by category") {
+      val body = s"""{"status":"ok","sources":[$source1]}"""
+      successfulStub(everythingPath, Seq(ApiKey -> validApiKey, Params.Category -> Category.general.name()), body)
+      val Right(response) = client.sources(category = Some(Category.general))
+      response.status shouldBe "ok"
+      response.sources shouldBe Seq(expectedSource1)
+    }
+
+    it("finds a source by language") {
+      val body = s"""{"status":"ok","sources":[$source1]}"""
+      successfulStub(everythingPath, Seq(ApiKey -> validApiKey, Language -> LanguageCode.en.name), body)
+      val Right(response) = client.sources(language = Some(LanguageCode.en))
+      response.status shouldBe "ok"
+      response.sources shouldBe Seq(expectedSource1)
     }
   }
 
