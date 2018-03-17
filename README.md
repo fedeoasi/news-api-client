@@ -11,7 +11,7 @@ An HTTP client written in Scala for the [News API](https://newsapi.org).
 Add the following line to your SBT build definition:
 
 ```scala
-libraryDependencies += "com.github.fedeoasi" %% "news-api-client" % "0.3"
+libraryDependencies += "com.github.fedeoasi" %% "news-api-client" % "0.4"
 ```
 
 You can get an API key by registering at [News API](https://newsapi.org/account).
@@ -103,4 +103,4 @@ https://github.com/fedeoasi/news-api-client/blob/7040e778697c25a1a5073701e3b4af0
 ## Examples
 
 - Synchronous client [example](https://github.com/fedeoasi/news-api-client/blob/master/src/main/scala/com/github/fedeoasi/newsapi/SampleMain.scala)
-- Synchronous client [example](https://github.com/fedeoasi/news-api-client/blob/master/src/main/scala/com/github/fedeoasi/newsapi/SampleAsyncMain.scala)
+- Asynchronous client [example](https://github.com/fedeoasi/news-api-client/blob/master/src/main/scala/com/github/fedeoasi/newsapi/SampleAsyncMain.scala)
