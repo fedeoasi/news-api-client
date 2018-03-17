@@ -35,7 +35,7 @@ val client = AsyncNewsApiClient("<NEWS_API_KEY>")
 
 The asynchronous client requires an `ExecutionContext` at construction
 time. You can choose whether you want to provide your own execution
-context or simply bring into scope the default one.
+context or bring the default one into scope.
 
 ## Usage
 
@@ -99,3 +99,8 @@ client.sources()
 
 See all the supported parameters [here](
 https://github.com/fedeoasi/news-api-client/blob/7040e778697c25a1a5073701e3b4af0125b549ef/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L67).
+
+## Examples
+
+- Synchronous client [example](https://github.com/fedeoasi/news-api-client/blob/master/src/main/scala/com/github/fedeoasi/newsapi/SampleMain.scala)
+- Synchronous client [examples](https://github.com/fedeoasi/news-api-client/blob/master/src/main/scala/com/github/fedeoasi/newsapi/SampleAsyncMain.scala)
