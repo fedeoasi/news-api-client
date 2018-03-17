@@ -18,6 +18,7 @@ lazy val root = (project in file(".")).
     name := "News API Client",
     libraryDependencies ++= Seq(
       json4s,
+      mockito,
       nvI18n,
       scalajHttp,
       scalaTest,

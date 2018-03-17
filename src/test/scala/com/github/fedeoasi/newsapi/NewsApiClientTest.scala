@@ -31,13 +31,13 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
       .willReturn(
         aResponse()
           .withStatus(401)))
-    val client = new NewsApiClient(invalidApiKey, Host, useHttps = false)
+    val client = NewsApiClient(invalidApiKey, Host, useHttps = false)
     val Left(errorMessage) = client.everything("query")
     errorMessage should include("401")
   }
 
   describe("Top Headlines") {
-    val client = new NewsApiClient(validApiKey, Host, useHttps = false)
+    val client = NewsApiClient(validApiKey, Host, useHttps = false)
     val topHeadlinesPath = "/v2/top-headlines"
 
     it("finds all headlines") {
@@ -60,7 +60,7 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
   }
 
   describe("Everything") {
-    val client = new NewsApiClient(validApiKey, Host, useHttps = false)
+    val client = NewsApiClient(validApiKey, Host, useHttps = false)
     val everythingPath = "/v2/everything"
 
     it("finds all articles") {
@@ -92,7 +92,7 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
   }
 
   describe("Sources") {
-    val client = new NewsApiClient(validApiKey, Host, useHttps = false)
+    val client = NewsApiClient(validApiKey, Host, useHttps = false)
     val everythingPath = "/v2/sources"
 
     val source1 = """{"id":"abc-news","name":"ABC News","description":"Your trusted source","url":"http://abcnews.go.com","category":"general","language":"en","country":"us"}"""

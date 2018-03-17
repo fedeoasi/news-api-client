@@ -16,10 +16,26 @@ libraryDependencies += "com.github.fedeoasi" %% "news-api-client" % "0.2"
 
 You can get an API key by registering at [News API](https://newsapi.org/account).
 
+Both a synchronous and an asynchronous version of the client are provided.
+
+Synchronous client:
+
 ```scala
 import com.github.fedeoasi.newsapi._
-val client = new NewsApiClient("<NEWS_API_KEY>")
+val client = NewsApiClient("<NEWS_API_KEY>")
 ```
+
+Asynchronous client:
+
+```scala
+import com.github.fedeoasi.newsapi._
+import scala.concurrent.ExecutionContext.Implicits.global
+val client = AsyncNewsApiClient("<NEWS_API_KEY>")
+```
+
+The asynchronous client requires an `ExecutionContext` at construction
+time. You can choose whether you want to provide your own execution
+context or simply bring into scope the default one.
 
 ## Usage
 
@@ -32,6 +48,9 @@ client.topHeadlines() match {
   case Left(message) => //Something went wrong
 }
 ```
+
+The asynchronous client wraps the above result type into a scala `Future`.
+Other than that the method names and parameters are identical.
 
 ### Top Headlines
 
@@ -80,6 +99,3 @@ client.sources()
 
 See all the supported parameters [here](
 https://github.com/fedeoasi/news-api-client/blob/7040e778697c25a1a5073701e3b4af0125b549ef/src/main/scala/com/github/fedeoasi/newsapi/NewsApiClient.scala#L67).
-
-## Coming Soon
-- Support for asynchronous HTTP calls using Futures

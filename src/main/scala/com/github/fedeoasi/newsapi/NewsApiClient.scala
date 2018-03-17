@@ -2,13 +2,13 @@ package com.github.fedeoasi.newsapi
 
 import java.time.Instant
 
-import com.github.fedeoasi.newsapi.NewsApiClient.Params
+import com.github.fedeoasi.newsapi.NewsApiClient.{Params, Response}
 import com.neovisionaries.i18n.{CountryCode, LanguageCode}
 import org.json4s.jackson.Serialization._
 
 import scalaj.http.{Http, HttpRequest, HttpResponse}
 
-class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Boolean = true) {
+class NewsApiClient private (apiKey: String, host: String = "newsapi.org", useHttps: Boolean = true) {
   import NewsApiClient.Params._
 
   private val protocol = if (useHttps) "https" else "http"
@@ -21,7 +21,7 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
     category: Option[Category] = None,
     sources: Seq[String] = Seq.empty,
     pageSize: Option[Int] = None,
-    page: Option[Int] = None): Either[String, ArticlesResponse] = {
+    page: Option[Int] = None): Response[ArticlesResponse] = {
 
     val request = Http(s"$Host/top-headlines").param(ApiKey, apiKey)
     val addQueryParams = Function.chain[HttpRequest](Seq(
@@ -45,7 +45,7 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
     language: Option[LanguageCode] = None,
     sortBy: Option[SortBy] = None,
     pageSize: Option[Int] = None,
-    page: Option[Int] = None): Either[String, ArticlesResponse] = {
+    page: Option[Int] = None): Response[ArticlesResponse] = {
 
     val request = Http(s"$Host/everything")
       .param(ApiKey, apiKey)
@@ -68,7 +68,7 @@ class NewsApiClient(apiKey: String, host: String = "newsapi.org", useHttps: Bool
     category: Option[Category] = None,
     language: Option[LanguageCode] = None,
     country: Option[CountryCode] = None
-  ): Either[String, SourcesResponse] = {
+  ): Response[SourcesResponse] = {
 
     val request = Http(s"$Host/sources")
       .param(ApiKey, apiKey)
@@ -123,5 +123,11 @@ object NewsApiClient {
     val SortBy = "sortBy"
     val PageSize = "pageSize"
     val Page = "page"
+  }
+
+  type Response[T] = Either[String, T]
+
+  def apply(apiKey: String, host: String = "newsapi.org", useHttps: Boolean = true) = {
+    new NewsApiClient(apiKey, host, useHttps)
   }
 }

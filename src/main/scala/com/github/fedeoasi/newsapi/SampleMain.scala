@@ -7,7 +7,7 @@ object SampleMain {
     val NewsApiKeyEnv = "NEWS_API_KEY"
     Option(System.getenv(NewsApiKeyEnv)) match {
       case Some(apiKey) =>
-        val client = new NewsApiClient(apiKey)
+        val client = NewsApiClient(apiKey)
         val Right(response) = client.topHeadlines(country = Some(CountryCode.US))
         println(s"Found ${response.totalResults} headlines.")
         response.articles.foreach(a => println(s"${a.publishedAt} - ${a.source.name} - ${a.title}"))
