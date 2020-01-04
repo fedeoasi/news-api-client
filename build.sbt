@@ -10,7 +10,9 @@ inThisBuild(Seq(
   publishArtifact in Test := false,
   publishMavenStyle := true,
   crossScalaVersions := Seq("2.12.4", "2.11.12"),
-  scalaVersion := crossScalaVersions.value.head
+  scalaVersion := crossScalaVersions.value.head,
+  credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credential"),
+  updateOptions := updateOptions.value.withGigahorse(false)
 ))
 
 lazy val root = (project in file(".")).
