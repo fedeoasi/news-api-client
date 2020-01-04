@@ -14,7 +14,8 @@ package object newsapi {
     description: String,
     publishedAt: Instant,
     url: String,
-    urlToImage: String)
+    urlToImage: String,
+    content: String)
 
   case class Source(id: Option[String], name: String)
 

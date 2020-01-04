@@ -10,7 +10,7 @@ object SampleMain {
         val client = NewsApiClient(apiKey)
         val Right(response) = client.topHeadlines(country = Some(CountryCode.US))
         println(s"Found ${response.totalResults} headlines.")
-        response.articles.foreach(a => println(s"${a.publishedAt} - ${a.source.name} - ${a.title}"))
+        response.articles.foreach(a => println(s"${a.publishedAt} - ${a.source.name} - ${a.title} - ${a.content}"))
       case None =>
         throw new RuntimeException(s"Please provide a valid api key as $NewsApiKeyEnv")
     }

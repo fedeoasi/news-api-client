@@ -13,15 +13,17 @@ class NewsApiClientTest extends FunSpec with Matchers with WiremockSpec {
 
   private val article1 = """
     {"source":{"id":null,"name":"Formula1.com"},"author":null,"title":"Formula 1 article",
-     "description":"A description","url":"url","urlToImage":"imageUrl","publishedAt":"2018-01-31T13:16:33Z"}"""
+     "description":"A description","url":"url","urlToImage":"imageUrl","publishedAt":"2018-01-31T13:16:33Z",
+     "content":"content1"}"""
   private val article2 = """
     {"source":{"id":"cnbc","name":"CNBC"},"author":null,"title":"CNBC Article",
-     "description":"A description","url":"url","urlToImage":"imageUrl","publishedAt":"2018-01-31T12:16:33Z"}"""
+     "description":"A description","url":"url","urlToImage":"imageUrl","publishedAt":"2018-01-31T12:16:33Z",
+     "content":"content2"}"""
 
   private val formulaOneSource = Source(None, "Formula1.com")
-  private val expectedArticle1 = Article("Formula 1 article", formulaOneSource, None, "A description", Instant.parse("2018-01-31T13:16:33Z"), "url", "imageUrl")
+  private val expectedArticle1 = Article("Formula 1 article", formulaOneSource, None, "A description", Instant.parse("2018-01-31T13:16:33Z"), "url", "imageUrl", "content1")
   private val cnbcSource = Source(Some("cnbc"), "CNBC")
-  private val expectedArticle2 = Article("CNBC Article", cnbcSource, None, "A description", Instant.parse("2018-01-31T12:16:33Z"), "url", "imageUrl")
+  private val expectedArticle2 = Article("CNBC Article", cnbcSource, None, "A description", Instant.parse("2018-01-31T12:16:33Z"), "url", "imageUrl", "content2")
 
   it("fails when the provided key is invalid") {
     val path = "/v2/everything"
